@@ -26,5 +26,40 @@ def query():
     return '<h1>Hi {}, You are in {} !</h1>'.format(name, location)
 
 
+@app.route('/theform')
+def theform():
+
+    return '''<form method="POST" action="/theform">
+                <input type="text" name="name"/>
+                <input type="text" name="location"/>
+                <input type="submit" value="Submit"/>
+               </form>'''
+
+
+@app.route('/theform', methods=['POST'])
+def process():
+    name = request.form['name']
+    location = request.form['location']
+
+    return 'Hello {}.  You are from {}. You have submitted the form!'.format(name, location)
+
+
+@app.route('/processjson', methods=['POST'])
+def processjson():
+
+    data = request.get_json()
+
+    name = data['name']
+    location = data['location']
+
+    randomlist = data['randomlist']
+
+    return jsonify({'result': 'success',
+                    'name': name,
+                    'location': location,
+                    'randomkeyinlist': randomlist[1]
+                    })
+
+
 if __name__ == '__main__':
     app.run(host='localhost', port=5013, debug=True)
