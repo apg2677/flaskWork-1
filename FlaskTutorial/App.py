@@ -3,7 +3,6 @@ from flask import Flask, jsonify, request, url_for, redirect, session, render_te
 app = Flask(__name__)
 
 app.config['DEBUG'] = True
-app.config['SECRET_KEY'] = 'Thisisasecret!'
 
 
 @app.route('/')
