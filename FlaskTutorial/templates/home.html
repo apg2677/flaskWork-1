@@ -1,0 +1,11 @@
+<h1>Hi {{ name }}! You are on the Home Page!</h1>
+
+{% if display %}
+<h2>This is being displayed</h2>
+{% else %}
+<h2>This is not being displayed</h2>
+{% endif %} {% for x in myList %}
+<h3>{{x}}</h3>
+{% endfor %} {% for x in Listofdictionaries %}
+<h3>{{x.name}}</h3>
+{% endfor %}

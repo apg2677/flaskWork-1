@@ -1,22 +1,36 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, url_for, redirect, session, render_template
 
 app = Flask(__name__)
+
+app.config['DEBUG'] = True
+app.config['SECRET_KEY'] = 'Thisisasecret!'
 
 
 @app.route('/')
 def index():
+    session.pop('name', None)
     return '<h1>Hello, World!</h1>'
 
 
 @app.route('/home', methods=['POST', 'GET'], defaults={'name': 'Default'})
 @app.route('/home/<string:name>', methods=['POST', 'GET'])
 def home(name):
-    return '<h1>{} You are on the Home Page!</h1>'.format(name)
+    session['name'] = name
+    return render_template('home.html', name=name, display=False,
+                           myList=['one', 'two', 'three', 'four'],
+                           Listofdictionaries=[
+                               {'name': 'Zach'}, {'name': 'Zoe'}]
+                           )
 
 
 @app.route('/json')
 def json():
-    return jsonify({"key": "value", "list": [1, 2, 3, 4]})
+    if 'name' in session:
+        myList = [1, 2, 3, 4]
+        name = session['name']
+    else:
+        name = 'NotInSession'
+    return jsonify({"key": "value", "list": [1, 2, 3, 4], "name": name})
 
 
 @app.route('/query')
@@ -28,12 +42,7 @@ def query():
 
 @app.route('/theform')
 def theform():
-
-    return '''<form method="POST" action="/theform">
-                <input type="text" name="name"/>
-                <input type="text" name="location"/>
-                <input type="submit" value="Submit"/>
-               </form>'''
+    return render_template('form.html')
 
 
 @app.route('/theform', methods=['POST'])
@@ -41,7 +50,8 @@ def process():
     name = request.form['name']
     location = request.form['location']
 
-    return 'Hello {}.  You are from {}. You have submitted the form!'.format(name, location)
+    # return 'Hello {}.  You are from {}. You have submitted the form!'.format(name, location)
+    return redirect(url_for('home', name=name, location=location))
 
 
 @app.route('/processjson', methods=['POST'])
@@ -62,4 +72,4 @@ def processjson():
 
 
 if __name__ == '__main__':
-    app.run(host='localhost', port=5013, debug=True)
+    app.run(host='localhost', port=5013)
